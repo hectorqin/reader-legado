@@ -1,0 +1,41 @@
+name: Build Docker Image
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      forceBuild:
+        description: 'Force build'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    if: |
+      startsWith(github.repository, 'hectorqin')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Determine whether need to compile
+      id: check-commit
+      uses: actions/github-script@v6
+      with:
+        script: |
+          let needBuild = true
+          console.log(context.payload.commits)
+          if (context.payload.commits && context.payload.commits[context.payload.commits.length - 1].message.startsWith("ci")) {
+            needBuild = false;
+          }
+          return needBuild
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      if: |
+        inputs.forceBuild || steps.check-commit.outputs.result == true || steps.check-commit.outputs.result == 'true'
+      with:
+        name: hectorqin/reader
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        snapshot: true
+        tags: "test"
