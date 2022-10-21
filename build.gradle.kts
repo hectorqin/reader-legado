@@ -40,7 +40,8 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
 
   // log
-  implementation("io.github.microutils:kotlin-logging:1.6.24")
+  implementation("io.github.microutils:kotlin-logging:3.0.0")
+  implementation("org.slf4j:slf4j-simple:2.0.1")
   implementation("uk.org.lidalia:sysout-over-slf4j:1.0.2")
 
   implementation("com.google.guava:guava:28.0-jre")
