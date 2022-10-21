@@ -85,7 +85,7 @@ class MainVerticle : CoroutineVerticle() {
             val origin = it.request().getHeader("Origin")
             if (origin != null && origin.isNotEmpty() && it.request().method() == HttpMethod.OPTIONS
             ) {
-                it.end("")
+                it.success("")
             } else {
                 it.next()
             }
