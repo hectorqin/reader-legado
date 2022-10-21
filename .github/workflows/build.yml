@@ -34,7 +34,7 @@ jobs:
       if: |
         inputs.forceBuild || steps.check-commit.outputs.result == true || steps.check-commit.outputs.result == 'true'
       with:
-        name: hectorqin/reader
+        name: hectorqin/reader-legado
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         snapshot: true
