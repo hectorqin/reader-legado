@@ -1,4 +1,4 @@
-package com.htmake.reader.utils
+package com.htmake.legado.utils
 
 import io.vertx.core.buffer.Buffer
 import okhttp3.HttpUrl.Companion.toHttpUrl

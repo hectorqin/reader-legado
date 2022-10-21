@@ -18,7 +18,7 @@ repositories {
 val vertxVersion = "4.2.1"
 val junitJupiterVersion = "5.7.0"
 
-val mainVerticleName = "com.htmake.reader.MainVerticle"
+val mainVerticleName = "com.htmake.legado.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
 
 val watchForChange = "src/**/*"

@@ -1,7 +1,7 @@
-package com.htmake.reader
+package com.htmake.legado
 
 import com.google.gson.GsonBuilder
-import com.htmake.reader.utils.*
+import com.htmake.legado.utils.*
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.Debugger
 import io.legado.app.model.webBook.WebBook
