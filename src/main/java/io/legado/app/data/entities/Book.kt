@@ -57,7 +57,8 @@ data class Book(
         var useReplaceRule: Boolean = true,         // 正文使用净化替换规则
         var variable: String? = null,                // 自定义书籍变量信息(用于书源规则检索书籍信息)
         var readConfig: ReadConfig? = null,
-        @get:JsonProperty("isInShelf") var isInShelf: Boolean = false               // 是否加入到书架
+        @get:JsonProperty("isInShelf") var isInShelf: Boolean = false,               // 是否加入到书架
+        var lastCheckError: String? = null               // 上次更新错误
     ) : BaseBook {
 
     fun isLocalBook(): Boolean {
