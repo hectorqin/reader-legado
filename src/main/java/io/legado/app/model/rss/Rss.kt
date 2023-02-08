@@ -2,7 +2,7 @@ package io.legado.app.model.rss
 
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
-import io.legado.app.help.coroutine.Coroutine
+// import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.DebugLog
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
