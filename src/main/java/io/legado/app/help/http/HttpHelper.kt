@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import java.io.IOException
 import io.legado.app.model.DebugLog
+import io.legado.app.constant.AppConst
 
 private val proxyClientCache: ConcurrentHashMap<String, OkHttpClient> by lazy {
     ConcurrentHashMap()
@@ -42,12 +43,17 @@ val okHttpClient: OkHttpClient by lazy {
         .followSslRedirects(true)
         .addInterceptor(Interceptor { chain ->
             val request = chain.request()
-                .newBuilder()
-                .addHeader("Keep-Alive", "300")
+            val builder = request.newBuilder()
+            if (request.header(AppConst.UA_NAME) == null) {
+                builder.addHeader(AppConst.UA_NAME, AppConst.userAgent)
+            } else if (request.header(AppConst.UA_NAME) == "null") {
+                builder.removeHeader(AppConst.UA_NAME)
+            }
+            builder.addHeader("Keep-Alive", "10")
                 .addHeader("Connection", "Keep-Alive")
+                // .addHeader("Connection", "close")
                 .addHeader("Cache-Control", "no-cache")
-                .build()
-            chain.proceed(request)
+            chain.proceed(builder.build())
         })
     // if (AppConfig.isCronet) {
     //     builder.addInterceptor(CronetInterceptor())
