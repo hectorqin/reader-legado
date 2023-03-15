@@ -40,7 +40,7 @@ data class Book(
        var customIntro: String? = null,      // 简介内容(用户修改)
        var charset: String? = null,                // 自定义字符集名称(仅适用于本地书籍)
         var type: Int = 0,                          // @BookType
-       var group: Int = 0,                         // 自定义分组索引号
+       var group: Long = 0,                         // 自定义分组索引号
         var latestChapterTitle: String? = null,     // 最新章节标题
         var latestChapterTime: Long = System.currentTimeMillis(),            // 最新章节标题更新时间
         var lastCheckTime: Long = System.currentTimeMillis(),                // 最近一次更新书籍信息的时间
@@ -308,7 +308,7 @@ data class Book(
                     customIntro = doc.readString("$.customIntro"),
                     charset = doc.readString("$.charset"),
                     type = doc.readInt("$.type") ?: 0,
-                    group = doc.readInt("$.group") ?: 0,
+                    group = doc.readLong("$.group") ?: 0,
                     latestChapterTitle = doc.readString("$.latestChapterTitle"),
                     latestChapterTime = doc.readLong("$.latestChapterTime") ?: System.currentTimeMillis(),
                     lastCheckTime = doc.readLong("$.lastCheckTime") ?: System.currentTimeMillis(),
