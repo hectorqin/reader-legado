@@ -81,6 +81,10 @@ data class Book(
         return originName.endsWith(".cbz", true)
     }
 
+    fun isPdf(): Boolean {
+        return originName.endsWith(".pdf", true)
+    }
+
     fun isUmd(): Boolean {
         return originName.endsWith(".umd", true)
     }

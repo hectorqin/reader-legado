@@ -7,6 +7,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.*
 import io.legado.app.exception.TocEmptyException
+import io.legado.app.model.localBook.PdfFile
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -45,6 +46,9 @@ object LocalBook {
             book.isCbz() -> {
                 CbzFile.getChapterList(book)
             }
+            book.isPdf() -> {
+                PdfFile.getChapterList(book)
+            }
             else -> {
                 TextFile.getChapterList(book)
             }
@@ -65,6 +69,9 @@ object LocalBook {
             }
             book.isCbz() -> {
                 CbzFile.getContent(book, chapter)
+            }
+            book.isPdf() -> {
+                PdfFile.getContent(book, chapter)
             }
             else -> {
                 TextFile.getContent(book, chapter)
