@@ -74,6 +74,9 @@ dependencies {
   // 转换繁体
   // implementation("com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.1")
 
+  // pdfbox
+  implementation("org.apache.pdfbox:pdfbox:2.0.27")
+
   testImplementation("io.vertx:vertx-unit")
   testImplementation("junit:junit:4.13.1")
 }
