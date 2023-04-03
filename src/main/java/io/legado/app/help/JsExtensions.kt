@@ -9,6 +9,7 @@ import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.model.DebugLog
 import io.legado.app.utils.*
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
@@ -40,13 +41,15 @@ interface JsExtensions {
 
     fun getUserNameSpace(): String
 
+    fun getLogger(): DebugLog?
+
     /**
      * 访问网络,返回String
      */
     fun ajax(urlStr: String): String? {
         return runBlocking {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
+                val analyzeUrl = AnalyzeUrl(urlStr, source = getSource(), debugLog = getLogger())
                 analyzeUrl.getStrResponse(urlStr).body
             }.onFailure {
                 it.printOnDebug()
@@ -64,7 +67,7 @@ interface JsExtensions {
             val asyncArray = Array(urlList.size) {
                 async(IO) {
                     val url = urlList[it]
-                    val analyzeUrl = AnalyzeUrl(url, source = getSource())
+                    val analyzeUrl = AnalyzeUrl(url, source = getSource(), debugLog = getLogger())
                     analyzeUrl.getStrResponse(url)
                 }
             }
@@ -80,7 +83,7 @@ interface JsExtensions {
      */
     fun connect(urlStr: String): StrResponse {
         return runBlocking {
-            val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
+            val analyzeUrl = AnalyzeUrl(urlStr, source = getSource(), debugLog = getLogger())
             kotlin.runCatching {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
@@ -94,7 +97,7 @@ interface JsExtensions {
     fun connect(urlStr: String, header: String?): StrResponse {
         return runBlocking {
             val headerMap = GSON.fromJsonObject<Map<String, String>>(header).getOrNull()
-            val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap, source = getSource())
+            val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap, source = getSource(), debugLog = getLogger())
             kotlin.runCatching {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
@@ -544,6 +547,7 @@ interface JsExtensions {
      * 弹窗提示
      */
     fun toast(msg: Any?) {
+        getLogger()?.log("toast: " + msg.toString())
         Debug.log("toast: " + msg.toString())
     }
 
@@ -551,6 +555,7 @@ interface JsExtensions {
      * 弹窗提示 停留时间较长
      */
     fun longToast(msg: Any?) {
+        getLogger()?.log("longToast: " + msg.toString())
         Debug.log("longToast: " + msg.toString())
     }
 
@@ -558,6 +563,7 @@ interface JsExtensions {
      * 输出调试日志
      */
     fun log(msg: String): String {
+        getLogger()?.log(msg)
         Debug.log(msg)
         return msg
     }

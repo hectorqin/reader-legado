@@ -6,6 +6,7 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.constant.AppConst
 import javax.script.SimpleBindings
 import io.legado.app.utils.*
+import io.legado.app.model.DebugLog
 
 @JsonIgnoreProperties("headerMap", "source", "_userNameSpace", "userNameSpace", "loginHeader", "loginHeaderMap", "loginInfo", "loginInfoMap")
 data class RssSource(
@@ -113,6 +114,17 @@ data class RssSource(
 
     override fun getUserNameSpace(): String {
         return _userNameSpace
+    }
+
+    @Transient
+    private var debugLog: DebugLog? = null
+
+    fun setLogger(logger: DebugLog?) {
+        debugLog = logger
+    }
+
+    override fun getLogger(): DebugLog? {
+        return null
     }
 
     @Suppress("MemberVisibilityCanBePrivate")

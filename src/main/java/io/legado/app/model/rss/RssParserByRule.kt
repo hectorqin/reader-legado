@@ -35,7 +35,7 @@ object RssParserByRule {
             return RssParserDefault.parseXML(sortName, body, sourceUrl, debugLog)
         } else {
             val articleList = mutableListOf<RssArticle>()
-            val analyzeRule = AnalyzeRule(ruleData, rssSource)
+            val analyzeRule = AnalyzeRule(ruleData, rssSource, debugLog = debugLog)
             analyzeRule.setContent(body).setBaseUrl(sortUrl)
             analyzeRule.setRedirectUrl(sortUrl)
             var reverse = false

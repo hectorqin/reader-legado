@@ -23,6 +23,7 @@ import kotlin.collections.HashMap
 import mu.KotlinLogging
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.model.DebugLog
 
 private val logger = KotlinLogging.logger {}
 
@@ -32,7 +33,8 @@ private val logger = KotlinLogging.logger {}
 @Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(
     var ruleData: RuleDataInterface,
-    private val source: BaseSource? = null
+    private val source: BaseSource? = null,
+    var debugLog: DebugLog? = null
 ) : JsExtensions {
 
     val book get() = ruleData as? BaseBook
@@ -58,6 +60,14 @@ class AnalyzeRule(
 
     override fun getUserNameSpace(): String {
         return ruleData.getUserNameSpace()
+    }
+
+    override fun getSource(): BaseSource? {
+        return source
+    }
+
+    override fun getLogger(): DebugLog? {
+        return debugLog
     }
 
     @JvmOverloads
@@ -662,17 +672,13 @@ class AnalyzeRule(
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
-    override fun getSource(): BaseSource? {
-        return source
-    }
-
     /**
      * js实现跨域访问,不能删
      */
     override fun ajax(urlStr: String): String? {
         return runBlocking {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr, source = source, ruleData = book)
+                val analyzeUrl = AnalyzeUrl(urlStr, source = source, ruleData = book, debugLog = debugLog)
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")

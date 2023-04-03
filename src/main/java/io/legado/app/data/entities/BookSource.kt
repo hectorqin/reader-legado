@@ -10,6 +10,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 //import io.legado.app.utils.getPrefString
 import io.legado.app.help.SourceAnalyzer
+import io.legado.app.model.DebugLog
 import java.io.InputStream
 
 
@@ -117,6 +118,17 @@ data class BookSource(
 
     override fun getUserNameSpace(): String {
         return _userNameSpace
+    }
+
+    @Transient
+    private var debugLog: DebugLog? = null
+
+    fun setLogger(logger: DebugLog?) {
+        debugLog = logger
+    }
+
+    override fun getLogger(): DebugLog? {
+        return debugLog
     }
 
 //    fun getExploreKinds(): ArrayList<ExploreKind>? {

@@ -38,6 +38,7 @@ class AnalyzeUrl(
     private val ruleData: RuleDataInterface? = null,
     private val chapter: BookChapter? = null,
     headerMapF: Map<String, String>? = null,
+    var debugLog: DebugLog? = null,
 ) : JsExtensions {
     companion object {
         val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
@@ -82,6 +83,14 @@ class AnalyzeUrl(
 
     override fun getUserNameSpace(): String {
         return ruleData?.getUserNameSpace() ?: "unknow"
+    }
+
+    override fun getSource(): BaseSource? {
+        return source
+    }
+
+    override fun getLogger(): DebugLog? {
+        return debugLog
     }
 
     /**
@@ -345,8 +354,7 @@ class AnalyzeUrl(
     suspend fun getStrResponseAwait(
         jsStr: String? = null,
         sourceRegex: String? = null,
-        useWebView: Boolean = true,
-        debugLog: DebugLog? = null
+        useWebView: Boolean = true
     ): StrResponse {
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArrayAwait()))
@@ -421,11 +429,10 @@ class AnalyzeUrl(
     fun getStrResponse(
         jsStr: String? = null,
         sourceRegex: String? = null,
-        useWebView: Boolean = true,
-        debugLog: DebugLog? = null
+        useWebView: Boolean = true
     ): StrResponse {
         return runBlocking {
-            getStrResponseAwait(jsStr, sourceRegex, useWebView, debugLog)
+            getStrResponseAwait(jsStr, sourceRegex, useWebView)
         }
     }
 
@@ -566,10 +573,6 @@ class AnalyzeUrl(
 
     fun isPost(): Boolean {
         return method == RequestMethod.POST
-    }
-
-    override fun getSource(): BaseSource? {
-        return source
     }
 
     data class UrlOption(

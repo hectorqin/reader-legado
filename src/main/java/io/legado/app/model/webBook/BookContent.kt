@@ -42,7 +42,7 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(redirectUrl)
         val contentRule = bookSource.getContentRule()
-        val analyzeRule = AnalyzeRule(book, bookSource).setContent(body, baseUrl)
+        val analyzeRule = AnalyzeRule(book, bookSource, debugLog = debugLog).setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
         coroutineContext.ensureActive()
@@ -63,8 +63,9 @@ object BookContent {
                     mUrl = nextUrl,
                     source = bookSource,
                     ruleData = book,
-                    headerMapF = bookSource.getHeaderMap()
-                ).getStrResponseAwait(debugLog = debugLog)
+                    headerMapF = bookSource.getHeaderMap(),
+                    debugLog = debugLog
+                ).getStrResponseAwait()
                 res.body?.let { nextBody ->
                     contentData = analyzeContent(
                         book, nextUrl, res.url, nextBody, contentRule,
@@ -87,9 +88,10 @@ object BookContent {
                             mUrl = urlStr,
                             source = bookSource,
                             ruleData = book,
-                            headerMapF = bookSource.getHeaderMap()
+                            headerMapF = bookSource.getHeaderMap(),
+                            debugLog = debugLog
                         )
-                        val res = analyzeUrl.getStrResponseAwait(debugLog = debugLog)
+                        val res = analyzeUrl.getStrResponseAwait()
                         analyzeContent(
                             book, urlStr, res.url, res.body!!, contentRule,
                             bookChapter, bookSource, mNextChapterUrl, false
@@ -131,7 +133,7 @@ object BookContent {
         printLog: Boolean = true,
         debugLog: DebugLog? = null
     ): Pair<String, List<String>> {
-        val analyzeRule = AnalyzeRule(book, bookSource)
+        val analyzeRule = AnalyzeRule(book, bookSource, debugLog = debugLog)
         analyzeRule.setContent(body, baseUrl)
         val rUrl = analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = nextChapterUrl
