@@ -181,6 +181,10 @@ data class Book(
             // 非本地/webdav书仓的 cbz文件
             return FileUtils.getFile(File(rootDir + originName), "index.cbz")
         }
+        if (isPdf() && originName.indexOf("localStore") < 0 && originName.indexOf("webdav") < 0) {
+            // 非本地/webdav书仓的 pdf文件
+            return FileUtils.getFile(File(rootDir + originName), "index.pdf")
+        }
         return File(rootDir + originName)
     }
 
