@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 val logger = KotlinLogging.logger {}
 
-@JsonIgnoreProperties("variableMap", "infoHtml", "tocHtml", "config", "rootDir", "readConfig", "localBook", "epub", "epubRootDir", "onLineTxt", "localTxt", "umd", "realAuthor", "unreadChapterNum", "folderName", "localFile", "kindList", "_userNameSpace", "bookDir", "userNameSpace")
+@JsonIgnoreProperties("variableMap", "infoHtml", "tocHtml", "config", "rootDir", "localBook", "epub", "epubRootDir", "onLineTxt", "localTxt", "umd", "realAuthor", "unreadChapterNum", "folderName", "pdfImageWidth", "localFile", "kindList", "_userNameSpace", "bookDir", "userNameSpace")
 data class Book(
         override var bookUrl: String = "",                   // 详情页Url(本地书源存储完整文件路径)
         var tocUrl: String = "",                    // 目录页Url (toc=table of Contents)
@@ -148,6 +148,14 @@ data class Book(
 
     fun getDelTag(tag: Long): Boolean {
         return config().delTag and tag == tag
+    }
+
+    fun getPdfImageWidth(): Float {
+        return config().pdfImageWidth
+    }
+
+    fun setPdfImageWidth(pdfImageWidth: Float) {
+        config().pdfImageWidth = pdfImageWidth
     }
 
     fun getFolderName(): String {
@@ -372,7 +380,8 @@ data class Book(
         var reSegment: Boolean = false,
         var imageStyle: String? = null,
         var useReplaceRule: Boolean = false,   // 正文使用净化替换规则
-        var delTag: Long = 0L   //去除标签
+        var delTag: Long = 0L,   // 去除标签
+        var pdfImageWidth: Float = 800f  // pdf 生成图片宽度
     )
 
     class Converters {
