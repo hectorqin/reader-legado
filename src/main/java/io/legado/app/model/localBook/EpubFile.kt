@@ -167,6 +167,9 @@ class EpubFile(var book: Book) {
                if (chapter.url.substringBeforeLast("#") == res.href) {
                    elements.add(getBody(res, startFragmentId, endFragmentId))
                    isChapter = true
+                    if (nextUrl == null) {
+                        break;
+                    }
                   /**
                    * fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
                    * content src text/000001.html（当前章节）
