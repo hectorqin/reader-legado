@@ -205,14 +205,20 @@ object BookChapterList {
                         bookChapter.title = "\uD83D\uDD12" + bookChapter.title
                     }
                     chapterList.add(bookChapter)
+                } else {
+                    if(log) debugLog?.log(bookSource.bookSourceUrl, "章节名为空")
                 }
             }
             if(log) debugLog?.log(bookSource.bookSourceUrl, "└目录列表解析完成")
-            if(log) debugLog?.log(bookSource.bookSourceUrl, "≡首章信息")
-            if(log) debugLog?.log(bookSource.bookSourceUrl, "◇章节名称:${chapterList[0].title}")
-            if(log) debugLog?.log(bookSource.bookSourceUrl, "◇章节链接:${chapterList[0].url}")
-            if(log) debugLog?.log(bookSource.bookSourceUrl, "◇章节信息:${chapterList[0].tag}")
-            if(log) debugLog?.log(bookSource.bookSourceUrl, "◇是否卷名:${chapterList[0].isVolume}")
+            if (chapterList.size > 0) {
+                if(log) debugLog?.log(bookSource.bookSourceUrl, "≡首章信息")
+                if(log) debugLog?.log(bookSource.bookSourceUrl, "◇章节名称:${chapterList[0].title}")
+                if(log) debugLog?.log(bookSource.bookSourceUrl, "◇章节链接:${chapterList[0].url}")
+                if(log) debugLog?.log(bookSource.bookSourceUrl, "◇章节信息:${chapterList[0].tag}")
+                if(log) debugLog?.log(bookSource.bookSourceUrl, "◇是否卷名:${chapterList[0].isVolume}")
+            } else {
+                if(log) debugLog?.log(bookSource.bookSourceUrl, "章节列表为空")
+            }
         }
         return Pair(chapterList, nextUrlList)
     }

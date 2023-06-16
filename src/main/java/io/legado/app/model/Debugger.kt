@@ -9,6 +9,7 @@ import mu.KotlinLogging
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Date
+import io.legado.app.utils.GSON
 
 private val logger = KotlinLogging.logger {}
 
@@ -95,7 +96,9 @@ class Debugger(val logMsg: (String) -> Unit) : DebugLog {
         }.onSuccess { exploreBooks ->
             exploreBooks.let {
                 if (exploreBooks.isNotEmpty()) {
-                    log(webBook.sourceUrl, "︽发现页解析完成")
+                    log("┌发现结果列表")
+                    log("└" + GSON.toJson(exploreBooks))
+                    log(webBook.sourceUrl, "︽发现页解析完成\n\n")
                     infoDebug(webBook, exploreBooks[0].toBook())
                 } else {
                     log(webBook.sourceUrl, "︽未获取到书籍")
@@ -115,7 +118,9 @@ class Debugger(val logMsg: (String) -> Unit) : DebugLog {
         }.onSuccess { searchBooks ->
             searchBooks.let {
                 if (searchBooks.isNotEmpty()) {
-                    log(webBook.sourceUrl, "︽搜索页解析完成")
+                    log("┌搜索结果列表")
+                    log("└" + GSON.toJson(searchBooks))
+                    log(webBook.sourceUrl, "︽搜索页解析完成\n\n")
                     infoDebug(webBook, searchBooks[0].toBook())
                 } else {
                     log(webBook.sourceUrl, "︽未获取到书籍")
@@ -132,7 +137,9 @@ class Debugger(val logMsg: (String) -> Unit) : DebugLog {
         log(msg = "︾开始解析详情页")
         runCatching { webBook.getBookInfo(book) }
                 .onSuccess {
-                    log(webBook.sourceUrl, "︽详情页解析完成")
+                    log("┌书籍详情")
+                    log("└" + GSON.toJson(it))
+                    log(webBook.sourceUrl, "︽详情页解析完成\n\n")
                     tocDebug(webBook, it)
                 }
                 .onFailure {
@@ -150,7 +157,9 @@ class Debugger(val logMsg: (String) -> Unit) : DebugLog {
                 .onSuccess { chapterList ->
                     chapterList?.let {
                         if (it.isNotEmpty()) {
-                            log(webBook.sourceUrl, "︽目录页解析完成")
+                            log("┌目录列表")
+                            log("└" + GSON.toJson(it))
+                            log(webBook.sourceUrl, "︽目录页解析完成\n\n")
                             val nextChapterUrl = if (it.size > 1) it[1].url else null
                             contentDebug(webBook, book, it[0], nextChapterUrl)
                         } else {
@@ -174,6 +183,8 @@ class Debugger(val logMsg: (String) -> Unit) : DebugLog {
         log(webBook.sourceUrl, "︾开始解析正文页")
         runCatching { webBook.getBookContent(book, bookChapter, nextChapterUrl) }
                 .onSuccess {
+                    log("┌正文内容")
+                    log("└" + it)
                     log(webBook.sourceUrl, "︽正文页解析完成")
                 }
                 .onFailure {
