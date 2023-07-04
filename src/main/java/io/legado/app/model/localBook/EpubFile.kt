@@ -289,7 +289,7 @@ class EpubFile(var book: Book) {
             if (index == 0 && title.isEmpty()) {
                 chapter.title = "封面"
             } else {
-                chapter.title = title
+                chapter.title = title ?: ""
             }
             chapterList.add(chapter)
         }
@@ -321,7 +321,7 @@ class EpubFile(var book: Book) {
             if (index == 0 && title.isEmpty()) {
                 chapter.title = "封面"
             } else {
-                chapter.title = title
+                chapter.title = title ?: ""
             }
             chapterList.add(chapter)
         }
