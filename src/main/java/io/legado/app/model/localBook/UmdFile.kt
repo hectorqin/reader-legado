@@ -85,7 +85,7 @@ class UmdFile(var book: Book) {
     }
 
     private fun readUmd(): UmdBook? {
-        val input = File(book.bookUrl).inputStream()
+        val input = LocalBook.getBookInputStream(book)
         return UmdReader().read(input)
     }
 
