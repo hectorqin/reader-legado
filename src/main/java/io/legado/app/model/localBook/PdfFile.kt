@@ -8,6 +8,7 @@ import java.io.InputStream
 import java.util.*
 import java.nio.file.Paths
 import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.PDOutlineNode
 
 class PdfFile(var book: Book) {
     var info: MutableMap<String, Any>? = null
@@ -83,7 +84,10 @@ class PdfFile(var book: Book) {
     }
 
     private fun getChapterList(): ArrayList<BookChapter> {
-        val chapterList = ArrayList<BookChapter>()
+        val chapterList = getChapterListByOutline()
+        if (chapterList.size > 0) {
+            return chapterList
+        }
         val document = PDDocument.load(book.getLocalFile())
         for (pageIndex in 0 until document.numberOfPages) {
             val name = "output-$pageIndex.png";
@@ -97,5 +101,51 @@ class PdfFile(var book: Book) {
         book.latestChapterTitle = chapterList.lastOrNull()?.title
         book.totalChapterNum = chapterList.size
         return chapterList
+    }
+
+    private fun getChapterListByOutline(): ArrayList<BookChapter> {
+        val chapterList = ArrayList<BookChapter>()
+        val document = PDDocument.load(book.getLocalFile())
+        val outline = document.getDocumentCatalog().getDocumentOutline();
+        if (outline == null) {
+            return chapterList;
+        }
+
+    }
+
+    private fun processOutline(chapterList: ArrayList<BookChapter>, outline: PDOutlineNode) {
+        var current = outline.getFirstChild()
+        while (current != null) {
+            var page = current.findDestinationPage()
+            if (chapterList.size == 0) {
+                // 判断是否要加首章
+                if (page > 1) {
+                    val chapter = BookChapter()
+                    chapter.title = "首章"
+                    chapter.index = 0
+                    chapter.bookUrl = book.bookUrl
+                    chapter.url = "chapter-0"
+                    chapter.start = 0
+                    chapter.end = page - 1
+                    chapterList.add(chapter)
+                }
+            }
+            val chapter = BookChapter()
+            chapter.title = current.getTitle()
+            chapter.index = chapterList.size
+            chapter.bookUrl = book.bookUrl
+            chapter.url = "chapter-" + chapterList.size
+            chatper.start = page - 1
+            if (chapterList.size > 1) {
+                chapterList.get(chapterList.size - 1).end = page - 2;
+            }
+            chapterList.add(chapter)
+
+            if (current.hasChildren()) {
+                processOutline(chapterList, current)
+            }
+
+            current = current.getNextSibling()
+        }
     }
 }
