@@ -8,7 +8,7 @@ import java.io.InputStream
 import java.util.*
 import java.nio.file.Paths
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.PDOutlineNode
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode
 
 class PdfFile(var book: Book) {
     var info: MutableMap<String, Any>? = null
@@ -110,23 +110,25 @@ class PdfFile(var book: Book) {
         if (outline == null) {
             return chapterList;
         }
-
+        processOutline(document, chapterList, outline);
+        return chapterList;
     }
 
-    private fun processOutline(chapterList: ArrayList<BookChapter>, outline: PDOutlineNode) {
+    private fun processOutline(document: PDDocument, chapterList: ArrayList<BookChapter>, outline: PDOutlineNode) {
         var current = outline.getFirstChild()
         while (current != null) {
-            var page = current.findDestinationPage()
+            var page = current.findDestinationPage(document)
+            val pageIndex = document.documentCatalog.pages.indexOf(page)
             if (chapterList.size == 0) {
                 // 判断是否要加首章
-                if (page > 1) {
+                if (pageIndex > 1) {
                     val chapter = BookChapter()
                     chapter.title = "首章"
                     chapter.index = 0
                     chapter.bookUrl = book.bookUrl
                     chapter.url = "chapter-0"
                     chapter.start = 0
-                    chapter.end = page - 1
+                    chapter.end = pageIndex.toLong() - 1
                     chapterList.add(chapter)
                 }
             }
@@ -135,14 +137,14 @@ class PdfFile(var book: Book) {
             chapter.index = chapterList.size
             chapter.bookUrl = book.bookUrl
             chapter.url = "chapter-" + chapterList.size
-            chatper.start = page - 1
+            chapter.start = pageIndex.toLong() - 1
             if (chapterList.size > 1) {
-                chapterList.get(chapterList.size - 1).end = page - 2;
+                chapterList.get(chapterList.size - 1).end = pageIndex.toLong() - 2;
             }
             chapterList.add(chapter)
 
             if (current.hasChildren()) {
-                processOutline(chapterList, current)
+                processOutline(document, chapterList, current)
             }
 
             current = current.getNextSibling()
