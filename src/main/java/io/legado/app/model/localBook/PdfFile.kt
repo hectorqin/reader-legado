@@ -3,6 +3,7 @@ package io.legado.app.model.localBook
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.*
+import okhttp3.internal.closeQuietly
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -84,10 +85,17 @@ class PdfFile(var book: Book) {
     }
 
     private fun getChapterList(): ArrayList<BookChapter> {
-        val chapterList = getChapterListByOutline()
-        if (chapterList.size > 0) {
-            return chapterList
+        if (book.tocUrl.isEmpty()) {
+            book.tocUrl = "page"
         }
+        if (book.tocUrl == "page") {
+            return getChapterListByPage()
+        }
+        return getChapterListByOutline()
+    }
+
+    private fun getChapterListByPage(): ArrayList<BookChapter> {
+        val chapterList = ArrayList<BookChapter>()
         val document = PDDocument.load(book.getLocalFile())
         for (pageIndex in 0 until document.numberOfPages) {
             val name = "output-$pageIndex.png";
@@ -96,10 +104,13 @@ class PdfFile(var book: Book) {
             chapter.index = pageIndex
             chapter.bookUrl = book.bookUrl
             chapter.url = name
+            chapter.start = pageIndex.toLong()
+            chapter.end = pageIndex.toLong()
             chapterList.add(chapter)
         }
         book.latestChapterTitle = chapterList.lastOrNull()?.title
         book.totalChapterNum = chapterList.size
+        document.closeQuietly()
         return chapterList
     }
 
@@ -111,6 +122,11 @@ class PdfFile(var book: Book) {
             return chapterList;
         }
         processOutline(document, chapterList, outline);
+        if (chapterList.size > 0) {
+            // 处理尾章的结束
+            chapterList.get(chapterList.size - 1).end = document.numberOfPages.toLong();
+        }
+        document.closeQuietly()
         return chapterList;
     }
 
@@ -121,27 +137,33 @@ class PdfFile(var book: Book) {
             val pageIndex = document.documentCatalog.pages.indexOf(page)
             if (chapterList.size == 0) {
                 // 判断是否要加首章
-                if (pageIndex > 1) {
+                if (pageIndex >= 1) {
                     val chapter = BookChapter()
                     chapter.title = "首章"
                     chapter.index = 0
                     chapter.bookUrl = book.bookUrl
                     chapter.url = "chapter-0"
                     chapter.start = 0
-                    chapter.end = pageIndex.toLong() - 1
+                    chapter.end = pageIndex.toLong()
                     chapterList.add(chapter)
                 }
             }
-            val chapter = BookChapter()
-            chapter.title = current.getTitle()
-            chapter.index = chapterList.size
-            chapter.bookUrl = book.bookUrl
-            chapter.url = "chapter-" + chapterList.size
-            chapter.start = pageIndex.toLong() - 1
-            if (chapterList.size > 1) {
-                chapterList.get(chapterList.size - 1).end = pageIndex.toLong() - 2;
+
+            if (chapterList.size > 0) {
+                // 判断开始页是否和上一章开始页相同
+                if (chapterList.get(chapterList.size - 1).start == pageIndex.toLong()) {
+                    current = current.getNextSibling()
+                    continue
+                }
+                val chapter = BookChapter()
+                chapter.title = current.getTitle()
+                chapter.index = chapterList.size
+                chapter.bookUrl = book.bookUrl
+                chapter.url = "chapter-" + chapterList.size
+                chapter.start = pageIndex.toLong()
+                chapterList.get(chapterList.size - 1).end = pageIndex.toLong() - 1;
+                chapterList.add(chapter)
             }
-            chapterList.add(chapter)
 
             if (current.hasChildren()) {
                 processOutline(document, chapterList, current)

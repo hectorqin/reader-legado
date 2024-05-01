@@ -73,6 +73,10 @@ data class Book(
         return isLocalBook() && originName.endsWith(".epub", true)
     }
 
+    fun isLocalPdf(): Boolean {
+        return isLocalBook() && originName.endsWith(".pdf", true)
+    }
+
     fun isEpub(): Boolean {
         return originName.endsWith(".epub", true)
     }
