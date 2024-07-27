@@ -13,7 +13,7 @@ body {
 
 p {
     text-align: justify;
-    text-indent: 2em;
+    /*text-indent: 2em;*/
     line-height: 130%;
     margin-right: 0.5%;
     margin-left: 0.5%;
