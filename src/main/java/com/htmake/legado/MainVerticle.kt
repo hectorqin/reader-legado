@@ -1,5 +1,6 @@
 package com.htmake.legado
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.htmake.legado.utils.*
 import io.legado.app.data.entities.BookSource
@@ -26,8 +27,8 @@ import kotlinx.coroutines.launch
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
-val gson = GsonBuilder().disableHtmlEscaping().create()
-val prettyGson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+val gson: Gson = GsonBuilder().disableHtmlEscaping().create()
+val prettyGson: Gson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
 
 data class BasicError(
     val error: String,

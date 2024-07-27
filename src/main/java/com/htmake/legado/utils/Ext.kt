@@ -28,8 +28,8 @@ import io.legado.app.utils.FileUtils
 
 val logger = KotlinLogging.logger {}
 
-val gson = GsonBuilder().disableHtmlEscaping().create()
-val prettyGson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+val gson: Gson = GsonBuilder().disableHtmlEscaping().create()
+val prettyGson: Gson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
 
 var storageFinalPath = ""
 var workDirPath = ""
